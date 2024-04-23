@@ -1,7 +1,9 @@
+"use client";
 import * as React from "react";
 import Image from "next/image";
 import Spacing from "@/app/components/spacing";
 import Scene from "./components/scene";
+import Spline from "@splinetool/react-spline";
 
 interface ButtonProps {
   children: React.ReactNode;
@@ -25,6 +27,7 @@ function Home() {
       <Spacing lg />
       <Spacing lg />
       <Scene />
+      <Spline scene="https://prod.spline.design/7mnfiKtGH115hHeT/scene.splinecode" />
       <Image
         loading="lazy"
         src="https://cdn.builder.io/api/v1/image/assets/TEMP/7fd525a1373a717d0f0688bf9ef4f9ee718db1930ca85511d1c7283960fc152a?apiKey=3b2ae921196341e8b90eea3d3fee0292&"
