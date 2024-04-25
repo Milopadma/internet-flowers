@@ -2,8 +2,15 @@
 import * as React from "react";
 import Image from "next/image";
 import Spacing from "@/app/components/spacing";
+import Boxes from "./components/box";
+import Garden from "./components/garden";
+
+import dynamic from "next/dynamic";
 import Scene from "./components/scene";
-import Spline from "@splinetool/react-spline";
+
+const Model = dynamic(() => import("./components/model"), {
+  ssr: false,
+});
 
 interface ButtonProps {
   children: React.ReactNode;
@@ -21,13 +28,15 @@ function Home() {
   return (
     <div className="flex flex-col items-center py-20 mx-auto w-full text-2xl tracking-tighter bg-white max-w-[480px] text-neutral-500">
       <div className="mt-5 text-base tracking-tighter text-neutral-500">
-        Acme's Flower Garden
+        Acme&lsquo;s Flower Garden
       </div>
       <Spacing lg />
       <Spacing lg />
       <Spacing lg />
+      {/* <Boxes /> */}
+      {/* <Garden /> */}
       <Scene />
-      <Spline scene="https://prod.spline.design/7mnfiKtGH115hHeT/scene.splinecode" />
+      <Model />
       <Image
         loading="lazy"
         src="https://cdn.builder.io/api/v1/image/assets/TEMP/7fd525a1373a717d0f0688bf9ef4f9ee718db1930ca85511d1c7283960fc152a?apiKey=3b2ae921196341e8b90eea3d3fee0292&"
