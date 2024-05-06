@@ -1,56 +1,71 @@
 "use client";
-import * as React from "react";
-import Image from "next/image";
-import Spacing from "@/app/components/spacing";
-import Garden from "./components/garden";
+import React, { Suspense, useLayoutEffect, useRef } from "react";
+import { Canvas } from "@react-three/fiber";
+import { Stage, OrbitControls } from "@react-three/drei";
+import { useGLTF } from "@react-three/drei";
+import Spacing from "./components/spacing";
 
-import dynamic from "next/dynamic";
-import Scene from "./components/scene";
-
-const Model = dynamic(() => import("./components/box"), {
-  ssr: false,
-});
-
-
-interface ButtonProps {
-  children: React.ReactNode;
-}
-
-function Button({ children }: ButtonProps) {
+export default function Home() {
   return (
-    <div className="justify-center items-center px-8 py-2.5 w-full border-2 border-solid border-zinc-800 max-w-[336px] rounded-[32px] hover:cursor-pointer text-center">
-      {children}
-    </div>
-  );
-}
-
-function Home() {
-  return (
-    <div className="flex flex-col items-center py-20 mx-auto w-full text-2xl tracking-tighter bg-white max-w-[480px] text-neutral-500">
-      <div className="mt-5 text-base tracking-tighter text-neutral-500">
-        Acme&lsquo;s Flower Garden
+    <main className="grid grid-cols-6">
+      <div className="col-start-3 col-span-2 items-center w-full justify-center flex-col flex font-mono tracking-tighter text-center">
+        <Spacing size16 />
+        <span className="underline font-extrabold">acme&rsquo;s </span>internet
+        flowers
       </div>
-      <Spacing lg />
-      <Spacing lg />
-      <Spacing lg />
-      {/* <Garden /> */}
-      {/* <Scene /> */}
-      <Model />
-      {/* <Image
-        loading="lazy"
-        src="https://cdn.builder.io/api/v1/image/assets/TEMP/7fd525a1373a717d0f0688bf9ef4f9ee718db1930ca85511d1c7283960fc152a?apiKey=3b2ae921196341e8b90eea3d3fee0292&"
-        alt=""
-        className="self-stretch w-full aspect-[1.47]"
-        width={480}
-        height={327}
-      /> */}
-      <Spacing lg />
-      <Spacing lg />
-      <Spacing lg />
-      <Button>Send A Flower</Button>
-      <Button>Share</Button>
-    </div>
+      <div className="md:col-start-2 md:col-span-4 md:h-[calc(35vw)] h-max aspect-square col-start-1 col-span-6">
+        <FlowerCanvas />
+      </div>
+      <div className="col-start-2 col-span-4">
+        <Spacing size16 />
+        <div className="text-center">
+          <p className="text-lg font-mono tracking-tighter leading-[1.25em]">
+            Send a flower to another user. Make someone happy.
+          </p>
+          <Spacing size16 />
+          <div className="flex justify-center">
+            <button className="bg-black text-white font-mono tracking-tighter px-4 py-2 hover:cursor-pointer hover:text-black hover:bg-white border-black border-2">
+              Send Now
+            </button>
+          </div>
+        </div>
+      </div>
+    </main>
   );
 }
 
-export default Home;
+function FlowerCanvas() {
+  const ref = useRef();
+  return (
+    <Canvas
+      gl={{ preserveDrawingBuffer: true }}
+      shadows
+      dpr={[1, 1.5]}
+      camera={{ position: [0, 45, 150], fov: 50 }}
+    >
+      <ambientLight intensity={0.25} />
+      <Suspense fallback={null}>
+        <Stage shadows adjustCamera>
+          <Model />
+        </Stage>
+      </Suspense>
+      <OrbitControls ref={ref} autoRotate />
+    </Canvas>
+  );
+}
+
+function Model(props) {
+  const { nodes, materials } = useGLTF("/box.gltf");
+  return (
+    <group {...props} dispose={null}>
+      <mesh
+        castShadow
+        receiveShadow
+        geometry={nodes.Node.geometry}
+        material={materials.palette}
+      />
+    </group>
+  );
+}
+
+useGLTF.preload("/box.gltf");
