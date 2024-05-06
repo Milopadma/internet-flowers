@@ -2,15 +2,15 @@
 import * as React from "react";
 import Image from "next/image";
 import Spacing from "@/app/components/spacing";
-import Boxes from "./components/box";
 import Garden from "./components/garden";
 
 import dynamic from "next/dynamic";
 import Scene from "./components/scene";
 
-const Model = dynamic(() => import("./components/model"), {
+const Model = dynamic(() => import("./components/box"), {
   ssr: false,
 });
+
 
 interface ButtonProps {
   children: React.ReactNode;
@@ -33,18 +33,17 @@ function Home() {
       <Spacing lg />
       <Spacing lg />
       <Spacing lg />
-      {/* <Boxes /> */}
       {/* <Garden /> */}
-      <Scene />
+      {/* <Scene /> */}
       <Model />
-      <Image
+      {/* <Image
         loading="lazy"
         src="https://cdn.builder.io/api/v1/image/assets/TEMP/7fd525a1373a717d0f0688bf9ef4f9ee718db1930ca85511d1c7283960fc152a?apiKey=3b2ae921196341e8b90eea3d3fee0292&"
         alt=""
         className="self-stretch w-full aspect-[1.47]"
         width={480}
         height={327}
-      />
+      /> */}
       <Spacing lg />
       <Spacing lg />
       <Spacing lg />
