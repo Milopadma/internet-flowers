@@ -1,14 +1,4 @@
 @tailwind base;
-@tailwind components;
-@tailwind utilities;
-
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
-  }
-}
-
-* {
-  @apply outline outline-red-300;
-  @apply transition-all duration-500 ease-in-out;
-}
+  @tailwind components;
+  @tailwind utilities;
+  

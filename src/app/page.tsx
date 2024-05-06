@@ -4,6 +4,18 @@ import { Canvas } from "@react-three/fiber";
 import { Stage, OrbitControls } from "@react-three/drei";
 import { useGLTF } from "@react-three/drei";
 import Spacing from "./components/spacing";
+import {
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerDescription,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger,
+} from "@/components/ui/drawer";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
 export default function Home() {
   return (
@@ -20,16 +32,51 @@ export default function Home() {
         <Spacing size16 />
         <div className="text-center">
           <p className="text-lg font-mono tracking-tighter leading-[1.25em]">
-            Send a flower to another user. Make someone happy.
+            Send a flower to someone. Make them happy.
           </p>
           <Spacing size16 />
           <div className="flex justify-center">
-            <button className="bg-black text-white font-mono tracking-tighter px-4 py-2 hover:cursor-pointer hover:text-black hover:bg-white border-black border-2">
-              Send Now
-            </button>
+            <Drawer>
+              <DrawerTrigger>
+                <div className="bg-black text-white font-mono tracking-tighter px-4 py-2 hover:cursor-pointer hover:text-black hover:bg-white border-black border-2">
+                  Send Now
+                </div>
+              </DrawerTrigger>
+              <DrawerContent>
+                <DrawerHeader>
+                  <DrawerTitle>send to</DrawerTitle>
+                </DrawerHeader>
+                <input type="text" placeholder="name" />
+                <DrawerFooter>
+                  <Button className="bg-black text-white font-mono tracking-tighter px-4 py-2 hover:cursor-pointer hover:text-black hover:bg-white border-black border-2">
+                    Send Now
+                  </Button>
+                  <DrawerClose>
+                    <Button variant="outline">Cancel</Button>
+                  </DrawerClose>
+                </DrawerFooter>
+              </DrawerContent>
+            </Drawer>
           </div>
         </div>
       </div>
+      <footer className="col-start-2 col-span-4 font-mono tracking-tighter text-center text-xs">
+        <Spacing size64 />
+        <div className="text-center">
+          <p className="font-mono tracking-tighter leading-[1.25em]">
+            2024.{" "}
+            <a
+              href="https://milopadma.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="underline"
+            >
+              mylo
+            </a>
+          </p>
+        </div>
+        <Spacing size16 />
+      </footer>
     </main>
   );
 }
