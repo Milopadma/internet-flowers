@@ -18,10 +18,11 @@ import { useParams, useRouter, useSearchParams } from "next/navigation";
 
 export default function Home() {
   const { isLoaded, userId, sessionId, getToken } = useAuth();
+  const { user } = useUser();
+
+  const username = user?.emailAddresses[0].emailAddress;
 
   const router = useRouter();
-  const params = useParams();
-  console.log(params);
 
   // In case the user signs out while on the page.
   // if (!isLoaded || !userId) {
@@ -34,8 +35,8 @@ export default function Home() {
     <main className="grid grid-cols-6">
       <div className="col-start-3 col-span-2 items-center w-full justify-center flex-col flex font-mono tracking-tighter text-center">
         <Spacing size16 />
-        <span className="underline font-extrabold">acme&rsquo;s </span>internet
-        flowers
+        <span className="underline font-extrabold">{username}&rsquo;s </span>
+        internet flowers
       </div>
       <div className="md:col-start-2 md:col-span-4 md:aspect-video h-max aspect-square col-start-1 col-span-6">
         <FlowerCanvas />
@@ -102,6 +103,8 @@ function FlowerCanvas() {
       shadows
       dpr={[1, 1.5]}
       camera={{ position: [0, 45, 150], fov: 50 }}
+      onPointerEnter={() => (document.body.style.cursor = "grab")}
+      onPointerLeave={() => (document.body.style.cursor = "auto")}
     >
       <ambientLight intensity={0.25} />
       <Suspense fallback={null}>
@@ -135,7 +138,7 @@ function Flower(props: any) {
             setShowTooltip(true), (document.body.style.cursor = "help")
           )}
           onPointerLeave={() => (
-            setShowTooltip(false), (document.body.style.cursor = "auto")
+            setShowTooltip(false), (document.body.style.cursor = "grab")
           )}
         />
       </group>
@@ -183,7 +186,7 @@ useGLTF.preload("/flower1.gltf");
 
 // ShareFlower.tsx
 import { generateShareLink } from "./utils/shareFlower";
-import { useAuth } from "@clerk/nextjs";
+import { useAuth, useUser } from "@clerk/nextjs";
 
 const flowerId = "1234"; //testing
 

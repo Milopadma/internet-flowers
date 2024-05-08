@@ -8,6 +8,7 @@ import {
   Drawer,
   DrawerClose,
   DrawerContent,
+  DrawerDescription,
   DrawerFooter,
   DrawerHeader,
   DrawerTitle,
@@ -19,16 +20,8 @@ import { useParams, useRouter, useSearchParams } from "next/navigation";
 export default function Home() {
   const { isLoaded, userId, sessionId, getToken } = useAuth();
 
-  const router = useRouter();
   const { username } = useParams();
-  console.log(username);
-
-  // In case the user signs out while on the page.
-  // if (!isLoaded || !userId) {
-  //   router.push("/sign-in");
-  // }
-
-  console.log(sessionId);
+  const router = useRouter();
 
   return (
     <main className="grid grid-cols-6">
@@ -48,28 +41,60 @@ export default function Home() {
           </p>
           <Spacing size16 />
           <div className="flex justify-center">
-            <Drawer>
-              <DrawerTrigger>
-                <div className="bg-black text-white font-mono tracking-tighter px-4 py-2 hover:cursor-pointer hover:text-black hover:bg-white border-black border-2">
-                  Send Now
-                </div>
-              </DrawerTrigger>
-              <DrawerContent>
-                <DrawerHeader>
-                  <DrawerTitle>send to</DrawerTitle>
-                </DrawerHeader>
-                <input type="text" placeholder="name" />
-                <DrawerFooter>
-                  <Button className="bg-black text-white font-mono tracking-tighter px-4 py-2 hover:cursor-pointer hover:text-black hover:bg-white border-black border-2">
+            {/* if user not logged in, show sign in button */}
+            {(!userId && (
+              <Drawer>
+                <DrawerTrigger>
+                  <div className="bg-black text-white font-mono tracking-tighter px-4 py-2 hover:cursor-pointer hover:text-black hover:bg-white border-black border-2">
                     Send Now
-                  </Button>
-                  <ShareFlower flowerId={flowerId} />
-                  <DrawerClose>
-                    <Button variant="outline">Cancel</Button>
-                  </DrawerClose>
-                </DrawerFooter>
-              </DrawerContent>
-            </Drawer>
+                  </div>
+                </DrawerTrigger>
+                <DrawerContent>
+                  <DrawerHeader>
+                    <DrawerTitle className="font-mono tracking-tighter">
+                      Login or Signup
+                    </DrawerTitle>
+                    <DrawerDescription className="font-mono tracking-tighter">
+                      You have to be logged in to share flowers.
+                    </DrawerDescription>
+                  </DrawerHeader>
+                  <DrawerFooter>
+                    <Button
+                      onClick={() => router.push("/sign-in")}
+                      className="bg-black text-white font-mono tracking-tighter px-4 py-2 hover:cursor-pointer hover:text-black hover:bg-white border-black border-2"
+                    >
+                      Sign In
+                    </Button>
+                    <DrawerClose>
+                      <Button variant="outline">Cancel</Button>
+                    </DrawerClose>
+                  </DrawerFooter>
+                </DrawerContent>
+              </Drawer>
+            )) || (
+              <Drawer>
+                <DrawerTrigger>
+                  <div className="bg-black text-white font-mono tracking-tighter px-4 py-2 hover:cursor-pointer hover:text-black hover:bg-white border-black border-2">
+                    Send Now
+                  </div>
+                </DrawerTrigger>
+                <DrawerContent>
+                  <DrawerHeader>
+                    <DrawerTitle>send to</DrawerTitle>
+                  </DrawerHeader>
+                  <input type="text" placeholder="name" />
+                  <DrawerFooter>
+                    <Button className="bg-black text-white font-mono tracking-tighter px-4 py-2 hover:cursor-pointer hover:text-black hover:bg-white border-black border-2">
+                      Send Now
+                    </Button>
+                    <ShareFlower flowerId={flowerId} />
+                    <DrawerClose>
+                      <Button variant="outline">Cancel</Button>
+                    </DrawerClose>
+                  </DrawerFooter>
+                </DrawerContent>
+              </Drawer>
+            )}
           </div>
         </div>
       </div>
