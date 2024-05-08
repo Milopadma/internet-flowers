@@ -3,7 +3,7 @@ import React, { Suspense, useEffect, useRef, useState } from "react";
 import { Canvas } from "@react-three/fiber";
 import { Stage, OrbitControls, Html } from "@react-three/drei";
 import { useGLTF } from "@react-three/drei";
-import Spacing from "./components/spacing";
+import Spacing from "@/app/components/spacing";
 import {
   Drawer,
   DrawerClose,
@@ -20,8 +20,8 @@ export default function Home() {
   const { isLoaded, userId, sessionId, getToken } = useAuth();
 
   const router = useRouter();
-  const params = useParams();
-  console.log(params);
+  const { username } = useParams();
+  console.log(username);
 
   // In case the user signs out while on the page.
   // if (!isLoaded || !userId) {
@@ -34,8 +34,8 @@ export default function Home() {
     <main className="grid grid-cols-6">
       <div className="col-start-3 col-span-2 items-center w-full justify-center flex-col flex font-mono tracking-tighter text-center">
         <Spacing size16 />
-        <span className="underline font-extrabold">acme&rsquo;s </span>internet
-        flowers
+        <span className="underline font-extrabold">{username}&rsquo;s </span>
+        internet flowers
       </div>
       <div className="md:col-start-2 md:col-span-4 md:aspect-video h-max aspect-square col-start-1 col-span-6">
         <FlowerCanvas />
@@ -182,7 +182,7 @@ useGLTF.preload("/box.gltf");
 useGLTF.preload("/flower1.gltf");
 
 // ShareFlower.tsx
-import { generateShareLink } from "./utils/shareFlower";
+import { generateShareLink } from "@/app/utils/shareFlower";
 import { useAuth } from "@clerk/nextjs";
 
 const flowerId = "1234"; //testing
