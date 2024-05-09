@@ -108,10 +108,18 @@ function FlowerCanvas() {
     >
       <ambientLight intensity={0.25} />
       <Suspense fallback={null}>
-        <Stage shadows adjustCamera>
+        <Stage shadows adjustCamera castShadow>
           <Model />
-          <Flower position={[0, 0, 0]} scale={[1, 1, 1]} />
-          <Flower position={[0, 0, 1]} scale={[1, 1, 1]} />
+          <Flower
+            position={[0, 0, 0]}
+            scale={[1, 1, 1]}
+            type={FlowerType.Dandelion}
+          />
+          <Flower
+            position={[1, 0, 0.5]}
+            scale={[1, 1, 1]}
+            type={FlowerType.Rose}
+          />
         </Stage>
       </Suspense>
       {/* @ts-ignore */}
@@ -120,14 +128,28 @@ function FlowerCanvas() {
   );
 }
 
-function Flower(props: any) {
-  const { nodes, materials } = useGLTF("/flower1.gltf");
+enum FlowerType {
+  Dandelion,
+  Rose,
+}
+
+interface FlowerProps {
+  type: FlowerType;
+  position: number[];
+  scale: number[];
+}
+
+function Flower(props: FlowerProps) {
+  const { type } = props;
+  const { nodes, materials } = useGLTF(
+    type === FlowerType.Dandelion ? "/flower1.gltf" : "/flower2.gltf"
+  );
   const [showTooltip, setShowTooltip] = React.useState(false);
   const [tooltipPosition, setTooltipPosition] = React.useState({ x: 0, y: 0 });
 
   return (
     <>
-      <group {...props} dispose={null}>
+      <group dispose={null} position={props.position} scale={props.scale}>
         <mesh
           castShadow
           receiveShadow
@@ -159,7 +181,10 @@ function Flower(props: any) {
         }}
       >
         <h1 className="font-mono">
-          <div className="font-black">Dandelion</div>given by name
+          <div className="font-black">
+            {type === FlowerType.Dandelion ? "Dandelion" : "Rose"}
+          </div>
+          given by name
         </h1>
       </Html>
     </>
@@ -167,7 +192,7 @@ function Flower(props: any) {
 }
 
 function Model(props: any) {
-  const { nodes, materials } = useGLTF("/box.gltf");
+  const { nodes, materials } = useGLTF("/grass.gltf");
   return (
     <group {...props} dispose={null}>
       <mesh
@@ -180,9 +205,6 @@ function Model(props: any) {
     </group>
   );
 }
-
-useGLTF.preload("/box.gltf");
-useGLTF.preload("/flower1.gltf");
 
 // ShareFlower.tsx
 import { generateShareLink } from "./utils/shareFlower";
