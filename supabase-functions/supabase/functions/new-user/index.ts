@@ -30,11 +30,30 @@ Deno.serve(async (req) => {
       const email = email_addresses[0].email_address;
       console.log(email.split("@")[0]);
 
-      msg = {
-        email_addresses: email_addresses,
-        email: email,
-        name: email.split("@")[0],
-      };
+      const { data: insertData, error } = await supabase.from("user").insert([
+        {
+          email: email,
+          username: email.split("@")[0],
+          flowers: [
+            {
+              "flowerType": "Dandelion",
+              "vectorLocation": [
+                1,
+                0,
+                1,
+              ],
+            },
+            {
+              "flowerType": "Dandelion",
+              "vectorLocation": [
+                1,
+                0,
+                0,
+              ],
+            },
+          ],
+        },
+      ]);
     }
 
     return new Response(JSON.stringify({ data, msg }), {
