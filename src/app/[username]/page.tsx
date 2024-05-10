@@ -19,15 +19,68 @@ import { useParams, useRouter, useSearchParams } from "next/navigation";
 
 export default function Home() {
   const { isLoaded, userId, sessionId, getToken } = useAuth();
+  const { user } = useUser();
 
-  const { username } = useParams();
+  const username = user?.emailAddresses[0].emailAddress.split("@")[0];
+
   const router = useRouter();
+
+  // In case the user signs out while on the page.
+  // if (!isLoaded || !userId) {
+  //   router.push("/sign-in");
+  // }
+
+  console.log(sessionId);
+
+  const handleLogout = async () => {
+    await fetch("/api/logout", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ sessionId }),
+    });
+
+    router.push("/sign-in");
+  };
 
   return (
     <main className="grid grid-cols-6">
       <div className="col-start-3 col-span-2 items-center w-full justify-center flex-col flex font-mono tracking-tighter text-center">
         <Spacing size16 />
-        <span className="underline font-extrabold">{username}&rsquo;s </span>
+        <UserButton />
+        <Drawer>
+          <DrawerTrigger>
+            <span className="underline font-extrabold">
+              {username}&rsquo;s{" "}
+            </span>
+          </DrawerTrigger>
+          <DrawerContent>
+            <DrawerHeader>
+              <DrawerTitle className="font-mono">profile</DrawerTitle>
+              <DrawerDescription className="font-mono gap-4 flex flex-row items-center">
+                {username}
+                <Button variant={"secondary"}>change</Button>
+              </DrawerDescription>
+              <DrawerDescription className="font-mono gap-4 flex flex-row items-center">
+                <Button
+                  variant={"secondary"}
+                  className="bg-red-100 text-red-700"
+                  onClick={() => handleLogout()}
+                >
+                  logout
+                </Button>
+              </DrawerDescription>
+            </DrawerHeader>
+            <DrawerFooter>
+              <DrawerClose>
+                <Button variant="outline" className="font-mono">
+                  done
+                </Button>
+              </DrawerClose>
+            </DrawerFooter>
+          </DrawerContent>
+        </Drawer>
         internet flowers
       </div>
       <div className="md:col-start-2 md:col-span-4 md:aspect-video h-max aspect-square col-start-1 col-span-6">
@@ -37,64 +90,32 @@ export default function Home() {
         <Spacing size16 />
         <div className="text-center">
           <p className="text-lg font-mono tracking-tighter leading-[1.25em]">
-            Send a flower to someone. Make them happy.
+            send a flower to someone. make them happy.
           </p>
           <Spacing size16 />
           <div className="flex justify-center">
-            {/* if user not logged in, show sign in button */}
-            {(!userId && (
-              <Drawer>
-                <DrawerTrigger>
-                  <div className="bg-black text-white font-mono tracking-tighter px-4 py-2 hover:cursor-pointer hover:text-black hover:bg-white border-black border-2">
+            <Drawer>
+              <DrawerTrigger>
+                <div className="bg-black text-white font-mono tracking-tighter px-4 py-2 hover:cursor-pointer hover:text-black hover:bg-white border-black border-2">
+                  send now
+                </div>
+              </DrawerTrigger>
+              <DrawerContent>
+                <DrawerHeader>
+                  <DrawerTitle>send to</DrawerTitle>
+                </DrawerHeader>
+                <input type="text" placeholder="name" />
+                <DrawerFooter>
+                  <Button className="bg-black text-white font-mono tracking-tighter px-4 py-2 hover:cursor-pointer hover:text-black hover:bg-white border-black border-2">
                     Send Now
-                  </div>
-                </DrawerTrigger>
-                <DrawerContent>
-                  <DrawerHeader>
-                    <DrawerTitle className="font-mono tracking-tighter">
-                      Login or Signup
-                    </DrawerTitle>
-                    <DrawerDescription className="font-mono tracking-tighter">
-                      You have to be logged in to share flowers.
-                    </DrawerDescription>
-                  </DrawerHeader>
-                  <DrawerFooter>
-                    <Button
-                      onClick={() => router.push("/sign-in")}
-                      className="bg-black text-white font-mono tracking-tighter px-4 py-2 hover:cursor-pointer hover:text-black hover:bg-white border-black border-2"
-                    >
-                      Sign In
-                    </Button>
-                    <DrawerClose>
-                      <Button variant="outline">Cancel</Button>
-                    </DrawerClose>
-                  </DrawerFooter>
-                </DrawerContent>
-              </Drawer>
-            )) || (
-              <Drawer>
-                <DrawerTrigger>
-                  <div className="bg-black text-white font-mono tracking-tighter px-4 py-2 hover:cursor-pointer hover:text-black hover:bg-white border-black border-2">
-                    Send Now
-                  </div>
-                </DrawerTrigger>
-                <DrawerContent>
-                  <DrawerHeader>
-                    <DrawerTitle>send to</DrawerTitle>
-                  </DrawerHeader>
-                  <input type="text" placeholder="name" />
-                  <DrawerFooter>
-                    <Button className="bg-black text-white font-mono tracking-tighter px-4 py-2 hover:cursor-pointer hover:text-black hover:bg-white border-black border-2">
-                      Send Now
-                    </Button>
-                    <ShareFlower flowerId={flowerId} />
-                    <DrawerClose>
-                      <Button variant="outline">Cancel</Button>
-                    </DrawerClose>
-                  </DrawerFooter>
-                </DrawerContent>
-              </Drawer>
-            )}
+                  </Button>
+                  <ShareFlower flowerId={flowerId} />
+                  <DrawerClose>
+                    <Button variant="outline">Cancel</Button>
+                  </DrawerClose>
+                </DrawerFooter>
+              </DrawerContent>
+            </Drawer>
           </div>
         </div>
       </div>
@@ -127,13 +148,23 @@ function FlowerCanvas() {
       shadows
       dpr={[1, 1.5]}
       camera={{ position: [0, 45, 150], fov: 50 }}
+      onPointerEnter={() => (document.body.style.cursor = "grab")}
+      onPointerLeave={() => (document.body.style.cursor = "auto")}
     >
       <ambientLight intensity={0.25} />
       <Suspense fallback={null}>
-        <Stage shadows adjustCamera>
+        <Stage shadows adjustCamera castShadow>
           <Model />
-          <Flower position={[0, 0, 0]} scale={[1, 1, 1]} />
-          <Flower position={[0, 0, 1]} scale={[1, 1, 1]} />
+          <Flower
+            position={[0, 0, 0]}
+            scale={[1, 1, 1]}
+            type={FlowerType.Dandelion}
+          />
+          <Flower
+            position={[1, 0, 0.5]}
+            scale={[1, 1, 1]}
+            type={FlowerType.Rose}
+          />
         </Stage>
       </Suspense>
       {/* @ts-ignore */}
@@ -142,14 +173,28 @@ function FlowerCanvas() {
   );
 }
 
-function Flower(props: any) {
-  const { nodes, materials } = useGLTF("/flower1.gltf");
+enum FlowerType {
+  Dandelion,
+  Rose,
+}
+
+interface FlowerProps {
+  type: FlowerType;
+  position: number[];
+  scale: number[];
+}
+
+function Flower(props: FlowerProps) {
+  const { type } = props;
+  const { nodes, materials } = useGLTF(
+    type === FlowerType.Dandelion ? "/flower1.gltf" : "/flower2.gltf"
+  );
   const [showTooltip, setShowTooltip] = React.useState(false);
   const [tooltipPosition, setTooltipPosition] = React.useState({ x: 0, y: 0 });
 
   return (
     <>
-      <group {...props} dispose={null}>
+      <group dispose={null} position={props.position} scale={props.scale}>
         <mesh
           castShadow
           receiveShadow
@@ -160,7 +205,7 @@ function Flower(props: any) {
             setShowTooltip(true), (document.body.style.cursor = "help")
           )}
           onPointerLeave={() => (
-            setShowTooltip(false), (document.body.style.cursor = "auto")
+            setShowTooltip(false), (document.body.style.cursor = "grab")
           )}
         />
       </group>
@@ -181,7 +226,10 @@ function Flower(props: any) {
         }}
       >
         <h1 className="font-mono">
-          <div className="font-black">Dandelion</div>given by name
+          <div className="font-black">
+            {type === FlowerType.Dandelion ? "Dandelion" : "Rose"}
+          </div>
+          given by name
         </h1>
       </Html>
     </>
@@ -189,7 +237,7 @@ function Flower(props: any) {
 }
 
 function Model(props: any) {
-  const { nodes, materials } = useGLTF("/box.gltf");
+  const { nodes, materials } = useGLTF("/grass.gltf");
   return (
     <group {...props} dispose={null}>
       <mesh
@@ -203,12 +251,9 @@ function Model(props: any) {
   );
 }
 
-useGLTF.preload("/box.gltf");
-useGLTF.preload("/flower1.gltf");
-
 // ShareFlower.tsx
 import { generateShareLink } from "@/app/utils/shareFlower";
-import { useAuth } from "@clerk/nextjs";
+import { UserButton, useAuth, useUser } from "@clerk/nextjs";
 
 const flowerId = "1234"; //testing
 
