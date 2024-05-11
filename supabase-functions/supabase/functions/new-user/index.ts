@@ -34,24 +34,7 @@ Deno.serve(async (req) => {
         {
           email: email,
           username: email.split("@")[0],
-          flowers: [
-            {
-              "flowerType": "Dandelion",
-              "vectorLocation": [
-                1,
-                0,
-                1,
-              ],
-            },
-            {
-              "flowerType": "Dandelion",
-              "vectorLocation": [
-                1,
-                0,
-                0,
-              ],
-            },
-          ],
+          flowers: [],
         },
       ]);
     }
